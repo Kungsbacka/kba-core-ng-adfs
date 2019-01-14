@@ -1,27 +1,49 @@
-# Coreangularapi
+# kba-core-ng-adfs
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.1.3.
+Project stub for an Angular web application with a .NET Core controller protected by OIDC tokens provided by ADFS. Phew. 
 
-## Development server
+The OIDC-ADFS configuration is based on descriptions from the following blog posts:
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+https://blogs.msdn.microsoft.com/azuredev/2017/09/22/protecting-a-net-core-2-0-spa-with-adfs/
+https://www.scottbrady91.com/Angular/SPA-Authentiction-using-OpenID-Connect-Angular-CLI-and-oidc-client
 
-## Code scaffolding
+## Structure
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+This project contains both an Angular frontend with OIDC capabilities and a .NET Core controller. Basically two separate projects in one. The Angular application has OIDC capabilities provided by [oidc-client-js](https://github.com/IdentityModel/oidc-client-js), while the .NET Core API uses Microsofts implementation of [OpenIdConnect](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.OpenIdConnect/).
 
-## Build
+## Initializing the project
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Install the node dependencies:
 
-## Running unit tests
+`npm install`
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Get the Nuget packages for .NET Core:
 
-## Running end-to-end tests
+`dotnet restore`
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+## Building
 
-## Further help
+Build the Angular part (resulting code ends up in the `wwwroot` directory):
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+`ng build`
+
+Build the .NET part:
+
+`dotnet build`
+
+## Running
+
+To run the entire project from .NET:
+
+`dotnet run`
+
+The application will be available at https://localhost:5001/. 
+
+This is not entirely practical when doing frontend development. In this case, run the .NET parts in one terminal and start the Angular development server in another:
+
+`ng serve --ssl` 
+
+This will make the live updateable dev server available at https://localhost:4200/. Note that you will need to change the "redirect URI" in ADFS to reflect this.
+
+## ADFS 4.0 configuration
+
