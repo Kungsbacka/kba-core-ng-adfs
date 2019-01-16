@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UserManager, UserManagerSettings, OidcClientSettings, User, Log } from 'oidc-client';
+import { Router, ActivatedRoute } from '@angular/router';
+import { routerNgProbeToken } from '@angular/router/src/router_module';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +12,7 @@ export class AuthService {
 
   private user: User = null;
 
-  constructor() {
+  constructor(private router: Router, private route: ActivatedRoute) {
     Log.logger = console;
     Log.level = Log.DEBUG;
 
@@ -31,13 +33,17 @@ export class AuthService {
     return `${this.user.token_type} ${this.user.access_token}`;
   }
 
-  startAuthentication(): Promise<void> {
-    return this.manager.signinRedirect();
+  startAuthentication(currentUrl?: string): Promise<void> {
+    return this.manager.signinRedirect({state: currentUrl});
   }
 
   completeAuthentication(): Promise<void> {
     return this.manager.signinRedirectCallback().then(user => {
         this.user = user;
+        if (this.user.state) {
+          console.log('AuthService::completeAuthentiction (' + this.user.state + ')');
+          this.router.navigateByUrl(this.user.state);
+        }
     });
 }
 }
